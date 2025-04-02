@@ -1,0 +1,30 @@
+<h1 class="page-title">Checks List</h1>
+
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Company</th>
+      <th>Check Number</th>
+      <th>Invoice Numbers</th>
+      <th>Image</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @checks.each do |check| %>
+      <tr>
+        <td><%= check.id %></td>
+        <td><%= check.company&.name || "N/A" %></td>
+        <td><%= check.check_number || "N/A" %></td>
+        <td><%= check.invoice_numbers || "N/A" %></td>
+        <td>
+          <% if check.image.attached? %>
+            <%= image_tag check.image, width: 100, class: "check-image" %>
+          <% else %>
+            No Image
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

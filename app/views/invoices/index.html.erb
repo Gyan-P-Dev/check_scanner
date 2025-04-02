@@ -1,0 +1,20 @@
+<h1 class="page-title">Invoices</h1>
+
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Invoice</th>
+      <th>Company</th>
+      <th>Check</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @invoices.each do |invoice| %>
+      <tr>
+        <td><%= invoice.invoice_number %></td>
+        <td><%= invoice.company&.name || "N/A" %></td>
+        <td><%= invoice.check&.check_number || "N/A" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

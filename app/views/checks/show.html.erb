@@ -1,0 +1,9 @@
+<h1>Check Details</h1>
+<p><strong>Check Number:</strong> <%= @check.number %></p>
+<p><strong>Amount:</strong> $<%= @check.amount %></p>
+<p><strong>Date:</strong> <%= @check.date %></p>
+
+<% if @check.image.attached? %>
+  <p><strong>Check Image:</strong></p>
+  <%= image_tag @check.image, width: "300" %>
+<% end %>

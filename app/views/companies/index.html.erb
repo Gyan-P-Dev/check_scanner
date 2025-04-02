@@ -1,0 +1,16 @@
+<h1 class="page-title">Companies</h1>
+
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Company Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @companies.each do |company| %>
+      <tr>
+        <td><%= company.name %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

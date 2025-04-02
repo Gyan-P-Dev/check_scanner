@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>CheckScanner</title>
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -11,6 +12,13 @@
   </head>
 
   <body>
+    <nav>
+      <h1 class="form-title">Upload Check</h1>
+      <%= link_to "Capture", new_check_path, class: nav_link_class("checks", "new") %>
+      <%= link_to "Checks", checks_path, class: nav_link_class("checks", "index") %>
+      <%= link_to "Invoices", invoices_path, class: nav_link_class("invoices") %>
+      <%= link_to "Companies", companies_path, class: nav_link_class("companies") %>
+    </nav>
     <%= yield %>
   </body>
 </html>

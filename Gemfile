@@ -29,6 +29,13 @@ gem "jbuilder"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
+gem "rtesseract"   # Ruby wrapper for Tesseract OCR
+gem "mini_magick"  # For image processing
+gem "image_processing"
+gem "devise"       # For user authentication (optional)
+gem "active_storage_validations"
+gem "byebug"
+
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 
