@@ -2,3 +2,4 @@
 import "@hotwired/turbo-rails";
 import "controllers";
 import "./image_zoom";
+import "./check_image_processor";

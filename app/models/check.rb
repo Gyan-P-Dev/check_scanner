@@ -6,6 +6,7 @@ class Check < ApplicationRecord
   has_one_attached :image
   validates :image, attached: true
   after_commit :extract_details, on: :create
+  validate :correct_image_type
 
   private
 
@@ -33,6 +34,12 @@ class Check < ApplicationRecord
     # Close and unlink temporary file
     file.close
     file.unlink
+  end
+
+  def correct_image_type
+    if image.attached? && !image.content_type.in?(%w[image/jpeg image/png image/jpg])
+      errors.add(:image, "must be a JPEG or PNG")
+    end
   end
 
   def preprocess_image(image_path)

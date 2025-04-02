@@ -1,92 +1,50 @@
 <div class="form-container">
   <%= form_with(model: @check, local: true, multipart: true, id: "check-form") do |form| %>
 
+    <!-- Image Upload / Capture -->
     <div class="form-group">
-      <%= form.label :image, "Upload Check Image", class: "form-label" %>
-      <%= form.file_field :image, id: "check-image", class: "form-input file-input", accept: "image/*", capture: "environment" %>
-    </div>
+  <%= form.label :image, "Upload or Capture Check Image", class: "form-label" %>
+  
+  <!-- File Upload -->
+  <%= form.file_field :image, id: "check-image", class: "form-input file-input", accept: "image/*", required: true %>
 
+  <!-- Camera Capture -->
+  <video id="camera-preview" style="display: none;" autoplay></video>
+  <canvas id="captured-frame" style="display: none;"></canvas>
+  <img id="captured-image" style="display: none; max-width: 100%;" />
+
+  <button type="button" id="start-camera" class="camera-btn">Open Camera</button>
+  <button type="button" id="capture-photo" class="camera-btn" style="display: none;">Capture</button>
+  <button type="button" id="cancel-camera" class="camera-btn" style="display: none;">Cancel</button>
+
+  <small class="error-message" id="image-error"></small>
+</div>
+
+    <!-- Company Selection -->
     <div class="form-group">
       <%= form.label :company_id, "Select Company", class: "form-label" %>
-      <%= form.collection_select :company_id, Company.all, :id, :name, {}, { id: "company-select", class: "form-input" } %>
+      <%= form.collection_select :company_id, Company.all, :id, :name, { prompt: "Choose a company" }, { id: "company-select", class: "form-input", required: true } %>
+      <small class="error-message" id="company-error"></small>
     </div>
 
+    <!-- Check Number -->
     <div class="form-group">
       <%= form.label :number, "Check Number", class: "form-label" %>
-      <%= form.text_field :number, id: "check-number", class: "form-input" %>
+      <%= form.text_field :number, id: "check-number", class: "form-input", required: true, title: "Enter a valid 4 to 6-digit check number" %>
+      <small class="error-message" id="check-number-error"></small>
     </div>
 
+    <!-- Invoice Numbers -->
     <div class="form-group">
       <%= form.label :invoice_numbers, "Invoice Numbers", class: "form-label" %>
-      <%= form.text_field :invoice_numbers, id: "invoice-numbers", class: "form-input" %>
+      <%= form.text_field :invoice_numbers, id: "invoice-numbers", class: "form-input", required: true, title: "Enter comma-separated numbers" %>
+      <small class="error-message" id="invoice-error"></small>
     </div>
 
+    <!-- Submit Button -->
     <div class="form-group">
       <%= form.submit "Upload Check", class: "submit-btn" %>
     </div>
 
   <% end %>
 </div>
-<!-- JavaScript for Camera and OCR -->
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    let imageInput = document.getElementById("check-image");
-
-    if (imageInput) {
-      imageInput.addEventListener("change", function (event) {
-        let file = event.target.files[0];
-        if (!file) return;
-
-        let formData = new FormData();
-        formData.append("image", file);
-        let csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-        fetch("/extract_company", {
-          method: "POST",
-          body: formData,
-           headers: {
-          "X-CSRF-Token": csrfToken, // Include CSRF token
-        },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.company_name) {
-              let companySelect = document.getElementById("company-select");
-              if (companySelect) {
-                let option = [...companySelect.options].find(
-                (opt) => opt.text.trim() === data.company_name.trim()
-              );
-
-              if (option) {
-                // If company exists, select it
-                companySelect.value = option.value;
-              } else {
-                // Create a new option dynamically
-                var newOption = document.createElement("option");
-                newOption.value = data.company_id; // Corrected ERB syntax
-                newOption.text = data.company_name;
-
-                // Append the new option to the select dropdown
-                companySelect.appendChild(newOption);
-
-                // Set the newly created option as selected
-                companySelect.value = data.company_id;
-              }
-            }
-          }
-            if (data.check_number) {
-              let checkNumberField = document.getElementById("check-number");
-              if (checkNumberField) checkNumberField.value = data.check_number;
-            }
-
-            if (data.invoice_numbers.length > 0) {
-              let invoiceField = document.getElementById("invoice-numbers");
-              if (invoiceField)
-                invoiceField.value = data.invoice_numbers.join(", ");
-            }
-          })
-          .catch((error) => console.error("Error extracting data:", error));
-      });
-    }
-  });
-</script>
