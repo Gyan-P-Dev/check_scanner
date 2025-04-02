@@ -10,10 +10,20 @@ class ChecksController < ApplicationController
     @check = Check.new(check_params)
 
     if @check.save
-      flash[:notice] = "Check uploaded successfully."
-      redirect_to @check
+      invoice_numbers = params[:check][:invoice_numbers]&.split(",").map(&:strip)
+
+      invoice_numbers.each do |invoice_number|
+        invoice = Invoice.find_or_create_by(number: invoice_number, company_id: @check.company_id)
+
+        if invoice
+          CheckInvoice.create!(check: @check, invoice: invoice)
+        else
+          Rails.logger.error "❌ Invoice with number #{invoice_number} not found!"
+        end
+      end
+
+      redirect_to checks_path, notice: "Check successfully created!"
     else
-      flash[:alert] = "Failed to upload check."
       render :new
     end
   end
@@ -37,15 +47,16 @@ class ChecksController < ApplicationController
     invoice_numbers = find_invoice_numbers(extracted_text)
 
     existing_company = if Company.find_by(name: company_name)
-        Company.find_by(name: company_name)
+        @company = Company.find_by(name: company_name)
         true
       else
-        Company.find_or_create_by(name: company_name)
+        @company = Company.find_or_create_by(name: company_name)
         false
       end
 
     render json: {
       company_name: company_name,
+      company_id: @company.id,
       check_number: check_number,
       invoice_numbers: invoice_numbers,
       exists: existing_company.present?,
@@ -55,7 +66,7 @@ class ChecksController < ApplicationController
   private
 
   def check_params
-    params.require(:check).permit(:image, :company_id, :check_number, invoice_ids: [])
+    params.require(:check).permit(:image, :company_id, :number, invoice_ids: [])
   end
 
   def extract_company_from_text(text)

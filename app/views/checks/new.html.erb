@@ -12,8 +12,8 @@
     </div>
 
     <div class="form-group">
-      <%= form.label :check_number, "Check Number", class: "form-label" %>
-      <%= form.text_field :check_number, id: "check-number", class: "form-input" %>
+      <%= form.label :number, "Check Number", class: "form-label" %>
+      <%= form.text_field :number, id: "check-number", class: "form-input" %>
     </div>
 
     <div class="form-group">
@@ -61,12 +61,16 @@
                 // If company exists, select it
                 companySelect.value = option.value;
               } else {
-                // If company is new, add it to the dropdown and select it
-                let newOption = document.createElement("option");
-                newOption.value = data.company_id; // Use the new company's ID
+                // Create a new option dynamically
+                var newOption = document.createElement("option");
+                newOption.value = data.company_id; // Corrected ERB syntax
                 newOption.text = data.company_name;
+
+                // Append the new option to the select dropdown
                 companySelect.appendChild(newOption);
-                companySelect.value = data.company_id; // Auto-select the new company
+
+                // Set the newly created option as selected
+                companySelect.value = data.company_id;
               }
             }
           }

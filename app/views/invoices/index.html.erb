@@ -11,9 +11,9 @@
   <tbody>
     <% @invoices.each do |invoice| %>
       <tr>
-        <td><%= invoice.invoice_number %></td>
+        <td><%= invoice.number %></td>
         <td><%= invoice.company&.name || "N/A" %></td>
-        <td><%= invoice.check&.check_number || "N/A" %></td>
+        <td><%= invoice.checks.any? ? invoice.checks.map(&:number).join(", ") : "N/A" %></td>
       </tr>
     <% end %>
   </tbody>

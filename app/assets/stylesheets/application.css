@@ -14,4 +14,5 @@
  *= require_self
  *= require checks
  *= require checks_table
+ *= require check_zoom
  */

@@ -3,7 +3,7 @@
 <table class="styled-table">
   <thead>
     <tr>
-      <th>ID</th>
+      <th>Date</th>
       <th>Company</th>
       <th>Check Number</th>
       <th>Invoice Numbers</th>
@@ -13,13 +13,19 @@
   <tbody>
     <% @checks.each do |check| %>
       <tr>
-        <td><%= check.id %></td>
+        <td class="local-time" data-time="<%= check.created_at.iso8601 %>">
+          Loading...
+        </td>
         <td><%= check.company&.name || "N/A" %></td>
-        <td><%= check.check_number || "N/A" %></td>
-        <td><%= check.invoice_numbers || "N/A" %></td>
+        <td><%= check.number || "N/A" %></td>
+        <td>[<%= check.invoices.map(&:number).join(", ") || "N/A" %>]</td>
         <td>
           <% if check.image.attached? %>
-            <%= image_tag check.image, width: 100, class: "check-image" %>
+            <%= image_tag url_for(check.image),
+                          class: "zoomable-image",
+                          width: 100,
+                          height: 100,
+                          data: { zoom: url_for(check.image) } if check.image.attached? %>
           <% else %>
             No Image
           <% end %>
@@ -28,3 +34,8 @@
     <% end %>
   </tbody>
 </table>
+
+
+<div id="zoom-modal" class="zoom-modal">
+  <img id="zoomed-image" src="" alt="Zoomed Image">
+</div>
