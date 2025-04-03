@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   let imageInput = document.getElementById("check-image");
-
+  let tabs = document.querySelectorAll(".nav-link"); // Adjust based on your tab structure
   // Camera Elements
   let startCameraButton = document.getElementById("start-camera");
   let captureButton = document.getElementById("capture-photo");
@@ -10,6 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
   let capturedImage = document.getElementById("captured-image");
 
   let stream = null;
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", function () {
+      stopCamera(); // Stop the camera when switching tabs\
+    });
+  });
 
   // **Handle File Upload**
   imageInput.addEventListener("change", function (event) {
@@ -23,12 +29,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // **Start Camera**
   startCameraButton.addEventListener("click", async function () {
+    console.log("Start Camera");
     resetPreview(); // Clear previous image
 
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (!stream) {
+        // Ensure new stream request
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      }
+
       video.srcObject = stream;
       video.style.display = "block";
+      imageInput.style.display = "none";
       captureButton.style.display = "inline-block";
       cancelCameraButton.style.display = "inline-block";
       startCameraButton.style.display = "none";
@@ -76,15 +88,25 @@ document.addEventListener("DOMContentLoaded", function () {
   function stopCamera() {
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
+      stream = null;
     }
+    video.srcObject = null;
+    video.removeAttribute("src"); // Ensure it fully resets
+    video.load(); // Reload the video element
+
+    imageInput.style.display = "block";
     video.style.display = "none";
     captureButton.style.display = "none";
     cancelCameraButton.style.display = "none";
     startCameraButton.style.display = "inline-block";
+    setTimeout(() => {
+      startCameraButton.disabled = false;
+    }, 100);
   }
 
   // **Reset Preview When Opening Camera**
   function resetPreview() {
+    imageInput.style.display = "block";
     capturedImage.src = "";
     capturedImage.style.display = "none";
     imageInput.value = ""; // Clear file input when opening the camera
@@ -118,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let formData = new FormData();
     formData.append("image", file);
     let csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
+    imageInput.style.display = "none";
     fetch("/extract_attributes", {
       method: "POST",
       body: formData,

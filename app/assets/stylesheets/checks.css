@@ -27,9 +27,9 @@ nav {
 
 /* Form Container */
 #check-form {
-  max-width: 400px;
+  max-width: 700px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px;
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
@@ -47,7 +47,7 @@ nav {
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 8px;
+  padding: 14px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 14px;
@@ -94,16 +94,58 @@ nav {
   cursor: pointer;
   font-weight: bold;
   margin-top: 10px;
+  font-size: 18px !important;
 }
 
 .submit-btn:hover {
   background-color: #bbb;
 }
-
+h1.form-title {
+  padding-top: 46px;
+  font-size: 39px;
+  font-weight: 800;
+  /* text-decoration: underline; */
+}
+.nav-anchor {
+  display: flex;
+  justify-content: center;
+  margin: 53px 0px;
+}
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 17px;
+  color: #514b4b;
+}
+.upload-camera {
+  display: flex;
+  gap: 42px;
+  align-items: center;
+}
 /* Mobile Responsiveness */
 @media (max-width: 480px) {
   #check-form {
-    width: 90%;
+    width: 100%;
+    padding: 15px;
+  }
+  .nav-link {
+    font-size: 12px;
+    margin: 0px;
+  }
+  .form-group label {
+    font-size: 15px;
+  }
+  h1.form-title {
+    font-size: 32px;
+  }
+  .nav-anchor {
+    margin: 47px 0px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 8px;
   }
 }
 
@@ -121,13 +163,16 @@ nav {
 .camera-btn,
 .capture-btn {
   display: block;
-  background-color: #007bff;
-  color: white;
+  /* background-color: #007bff; */
+  color: #007bff;
   border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  margin-top: 5px;
+  /* padding: 18px 25px; */
+  /* border-radius: 5px; */
+  /* margin-top: 5px; */
   cursor: pointer;
+  font-size: 37px;
+  white-space: nowrap;
+  background: none;
 }
 
 .hidden {
@@ -156,13 +201,14 @@ nav {
 }
 
 #camera-preview {
-  width: 100%; /* Make it responsive */
-  max-width: 400px; /* Set a reasonable max width */
-  height: auto; /* Maintain aspect ratio */
-  border-radius: 10px; /* Optional: Rounded edges */
-  border: 2px solid #ccc; /* Optional: Border for visibility */
-  margin: 10px auto; /* Centering */
-  display: block; /* Ensure it appears properly */
+  width: 100%;
+  max-width: 628px;
+  height: auto;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+  margin: 0 auto;
+  display: block;
+  /* height: 397px; */
 }
 
 #captured-image {
@@ -172,4 +218,21 @@ nav {
   display: block;
   margin-top: 10px;
   border-radius: 10px;
+}
+.capture-cancel-btn button {
+  font-size: 18px;
+  background: #007bff;
+  padding: 5px 19px;
+  color: #fff;
+  margin-top: 16px;
+  border-radius: 5px;
+  /* margin-right: 13px; */
+}
+.capture-cancel-btn {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+#check-form .form-group {
+  margin-top: 23px;
 }

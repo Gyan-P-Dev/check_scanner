@@ -2,21 +2,24 @@
   <%= form_with(model: @check, local: true, multipart: true, id: "check-form") do |form| %>
 
     <!-- Image Upload / Capture -->
-    <div class="form-group">
+    <div class="form-group mt-0">
   <%= form.label :image, "Upload or Capture Check Image", class: "form-label" %>
-  
+  <div class="upload-camera">
   <!-- File Upload -->
   <%= form.file_field :image, id: "check-image", class: "form-input file-input", accept: "image/*", required: true %>
 
   <!-- Camera Capture -->
   <video id="camera-preview" style="display: none;" autoplay></video>
+  
   <canvas id="captured-frame" style="display: none;"></canvas>
   <img id="captured-image" style="display: none; max-width: 100%;" />
 
-  <button type="button" id="start-camera" class="camera-btn">Open Camera</button>
+  <button type="button" id="start-camera" class="camera-btn"><i class="fa-solid fa-camera"></i></button>
+  </div>
+  <div class="capture-cancel-btn">
   <button type="button" id="capture-photo" class="camera-btn" style="display: none;">Capture</button>
   <button type="button" id="cancel-camera" class="camera-btn" style="display: none;">Cancel</button>
-
+    </div>
   <small class="error-message" id="image-error"></small>
 </div>
 
