@@ -34,7 +34,6 @@ gem "mini_magick"  # For image processing
 gem "image_processing"
 gem "devise"       # For user authentication (optional)
 gem "active_storage_validations"
-gem "byebug"
 gem 'pg'
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
@@ -59,6 +58,7 @@ group :development, :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "webdrivers"
+  gem "byebug"
 end
 
 group :development do
