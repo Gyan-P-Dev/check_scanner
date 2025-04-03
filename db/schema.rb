@@ -10,8 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_02_104227) do
-  create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+ActiveRecord::Schema[7.1].define(version: 2025_04_02_081805) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -21,7 +24,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_02_104227) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+  create_table "active_storage_blobs", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -33,13 +36,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_02_104227) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "active_storage_variant_records", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+  create_table "active_storage_variant_records", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "check_invoices", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+  create_table "check_invoices", force: :cascade do |t|
     t.bigint "check_id", null: false
     t.bigint "invoice_id", null: false
     t.datetime "created_at", null: false
@@ -48,9 +51,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_02_104227) do
     t.index ["invoice_id"], name: "index_check_invoices_on_invoice_id"
   end
 
-  create_table "checks", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+  create_table "checks", force: :cascade do |t|
     t.string "number"
-    t.decimal "amount", precision: 10
+    t.decimal "amount"
     t.date "date"
     t.string "image"
     t.bigint "company_id", null: false
@@ -59,17 +62,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_02_104227) do
     t.index ["company_id"], name: "index_checks_on_company_id"
   end
 
-  create_table "companies", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
+  create_table "companies", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "invoices", charset: "utf8mb4", collation: "utf8mb4_uca1400_ai_ci", force: :cascade do |t|
-    t.string "number"
+  create_table "invoices", force: :cascade do |t|
+    t.string "invoice_number"
     t.bigint "company_id", null: false
+    t.bigint "check_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["check_id"], name: "index_invoices_on_check_id"
     t.index ["company_id"], name: "index_invoices_on_company_id"
   end
 
@@ -78,5 +83,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_02_104227) do
   add_foreign_key "check_invoices", "checks"
   add_foreign_key "check_invoices", "invoices"
   add_foreign_key "checks", "companies"
+  add_foreign_key "invoices", "checks"
   add_foreign_key "invoices", "companies"
 end
