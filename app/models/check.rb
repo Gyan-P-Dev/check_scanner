@@ -13,47 +13,42 @@ class Check < ApplicationRecord
   def extract_details
     return unless image.attached?
 
-    with_tempfile(image.download) do |file_path|
-      preprocessed_image_path = preprocess_image(file_path)
-      extracted_text = extract_text(preprocessed_image_path)
-      assign_extracted_details(extracted_text)
-    end
-  end
+    # Convert ActiveStorage file to a temporary local file
+    file = Tempfile.new(["check_image", ".png"], Rails.root.join("tmp"))
+    file.binmode
+    file.write(image.download)
+    file.rewind
+    file_path = file.path
 
-  def with_tempfile(data)
-    Tempfile.create(["check_image", ".png"], Rails.root.join("tmp")) do |file|
-      file.binmode
-      file.write(data)
-      file.rewind
-      yield file.path
-    end
-  end
+    # Preprocess Image (Optional: Improve OCR Accuracy)
+    preprocessed_image_path = preprocess_image(file_path)
 
-  def extract_text(image_path)
-    RTesseract.new(image_path, lang: "eng", psm: 6).to_s
-  end
+    # Extract text from image using Tesseract
+    extracted_text = RTesseract.new(preprocessed_image_path, lang: "eng", psm: 6).to_s
 
-  def assign_extracted_details(text)
-    self.number = text[/\b\d{5,}\b/]  # Extract check number
-    self.amount = text[/\$\d+(\.\d{2})?/].to_s.delete("$").to_f  # Extract amount
-    self.date = text[/\d{2}\/\d{2}\/\d{4}/]  # Extract date (MM/DD/YYYY)
+    # Parse extracted text
+    self.number = extracted_text[/\b\d{5,}\b/]  # Extract check number
+    self.amount = extracted_text[/\$\d+(\.\d{2})?/].to_s.gsub("$", "").to_f  # Extract amount
+    self.date = extracted_text[/\d{2}\/\d{2}\/\d{4}/]  # Extract date (MM/DD/YYYY)
+
+    # Close and unlink temporary file
+    file.close
+    file.unlink
   end
 
   def correct_image_type
-    return unless image.attached?
-
-    allowed_types = %w[image/jpeg image/png image/jpg]
-    errors.add(:image, "must be a JPEG or PNG") unless image.content_type.in?(allowed_types)
+    if image.attached? && !image.content_type.in?(%w[image/jpeg image/png image/jpg])
+      errors.add(:image, "must be a JPEG or PNG")
+    end
   end
 
   def preprocess_image(image_path)
     processed_path = "#{Rails.root}/tmp/processed_check.png"
-    MiniMagick::Image.open(image_path).tap do |image|
-      image.resize "1000x1000"
-      image.colorspace "Gray"
-      image.contrast
-      image.write processed_path
-    end
+    image = MiniMagick::Image.open(image_path)
+    image.resize "1000x1000"
+    image.colorspace "Gray"
+    image.contrast
+    image.write processed_path
     processed_path
   end
 end

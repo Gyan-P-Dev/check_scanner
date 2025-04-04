@@ -18,7 +18,7 @@
         </td>
         <td><%= check.company&.name || "N/A" %></td>
         <td><%= check.number || "N/A" %></td>
-        <td>[<%= check.invoices.map(&:number).join(", ") || "N/A" %>]</td>
+        <td>[<%= check.invoices.map(&:invoice_number).join(", ") || "N/A" %>]</td>
         <td>
           <% if check.image.attached? %>
             <%= image_tag url_for(check.image),

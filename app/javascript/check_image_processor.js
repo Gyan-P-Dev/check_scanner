@@ -140,7 +140,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let formData = new FormData();
     formData.append("image", file);
     let csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
     imageInput.style.display = "none";
+
     fetch("/extract_attributes", {
       method: "POST",
       body: formData,
@@ -148,11 +150,14 @@ document.addEventListener("DOMContentLoaded", function () {
     })
       .then((response) => response.json())
       .then((data) => {
-        let isValid = true; // Assume image is valid initially
+        let companySelect = document.getElementById("company-select");
+        let checkNumberInput = document.getElementById("check-number");
+        let invoiceNumbersInput = document.getElementById("invoice-numbers");
 
-        // Validate company name
+        let firstEmptyField = null;
+
+        // Handle company name
         if (data.company_name) {
-          let companySelect = document.getElementById("company-select");
           let option = [...companySelect.options].find(
             (opt) => opt.text.trim() === data.company_name.trim()
           );
@@ -167,33 +172,31 @@ document.addEventListener("DOMContentLoaded", function () {
             companySelect.value = data.company_id;
           }
         } else {
-          isValid = false;
+          firstEmptyField ||= companySelect;
         }
 
-        // Validate check number
+        // Handle check number
         if (data.check_number) {
-          document.getElementById("check-number").value = data.check_number;
+          checkNumberInput.value = data.check_number;
         } else {
-          isValid = false;
+          firstEmptyField ||= checkNumberInput;
         }
 
-        // Validate invoice numbers
-        if (data.invoice_numbers.length > 0) {
-          document.getElementById("invoice-numbers").value =
-            data.invoice_numbers.join(", ");
+        // Handle invoice numbers
+        if (data.invoice_numbers && data.invoice_numbers.length > 0) {
+          invoiceNumbersInput.value = data.invoice_numbers.join(", ");
         } else {
-          isValid = false;
+          firstEmptyField ||= invoiceNumbersInput;
         }
 
-        // Show error if image is invalid
-        if (!isValid) {
-          alert("Invalid image. Please try again with a valid check image.");
-          resetPreview(); // Reset fields if image is invalid
+        // Focus the first empty field (if any)
+        if (firstEmptyField) {
+          firstEmptyField.focus();
         }
       })
       .catch((error) => {
+        console.error("OCR processing failed:", error);
         alert("Error processing image. Please try again.");
-        resetPreview();
       });
   }
 });
